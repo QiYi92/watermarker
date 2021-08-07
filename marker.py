@@ -8,8 +8,8 @@ import math
 
 from PIL import Image, ImageFont, ImageDraw, ImageEnhance, ImageChops
 
-# TTF_FONT = u'./font/青鸟华光简琥珀.ttf'
-TTF_FONT = os.path.join("font", "青鸟华光简琥珀.ttf")
+# TTF_FONT = u'./font/bird.ttf'
+TTF_FONT = os.path.join("font", "bird.ttf")
 TTF_FONT = os.path.join(os.path.dirname(os.path.abspath(__file__)), TTF_FONT)
 
 
@@ -18,21 +18,24 @@ def add_mark(imagePath, mark, args):
     添加水印，然后保存图片
     '''
     im = Image.open(imagePath)
-
-    image = mark(im)
-    if image:
+    # 判断图片是否为gif
+    if im.format != 'GIF':
+        image = mark(im)
         name = os.path.basename(imagePath)
-        if not os.path.exists(args.out):
-            os.mkdir(args.out)
+        if image:
+            if not os.path.exists(args.out):
+                os.mkdir(args.out)
 
-        new_name = os.path.join(args.out, name)
-        if os.path.splitext(new_name)[1] != '.png':
-            image = image.convert('RGB')
-        image.save(new_name, quality=args.quality)
+            new_name = os.path.join(args.out, name)
+            if os.path.splitext(new_name)[1] != '.png':
+                image = image.convert('RGB')
+            image.save(new_name, quality=args.quality)
 
-        print(name + " Success.")
+            print(name + " Success.")
+        else:
+            print(name + " Failed.")
     else:
-        print(name + " Failed.")
+        print("This is a gif image!")
 
 
 def set_opacity(im, opacity):
@@ -122,21 +125,38 @@ def gen_mark(args):
 
 def main():
     parse = argparse.ArgumentParser()
+    # -f参数，输入图片的位置（可以是具体的一张照片，也可以是整个文件夹）
     parse.add_argument("-f", "--file", type=str,
                        help="image file path or directory")
+
+    # -m参数，你要添加的内容
     parse.add_argument("-m", "--mark", type=str, help="watermark content")
-    parse.add_argument("-o", "--out", default="./output",
-                       help="image output directory, default is ./output")
-    parse.add_argument("-c", "--color", default="#8B8B1B", type=str,
+
+    # -o 参数，指定输出水印文件的位置
+    parse.add_argument("-o", "--out", default="./img",
+                       help="image output directory, default is ./img")
+
+    # -c 参数，指定水印的颜色
+    parse.add_argument("-c", "--color", default="#232862", type=str,
                        help="text color like '#000000', default is #8B8B1B")
-    parse.add_argument("-s", "--space", default=75, type=int,
+
+    # -s 参数，指定水印之间的空隙
+    parse.add_argument("-s", "--space", default=100, type=int,
                        help="space between watermarks, default is 75")
+
+    # -a 参数，指定水印的旋转角度
     parse.add_argument("-a", "--angle", default=30, type=int,
                        help="rotate angle of watermarks, default is 30")
+
+    # --size参数，指定水印文本字体大小
     parse.add_argument("--size", default=50, type=int,
                        help="font size of text, default is 50")
-    parse.add_argument("--opacity", default=0.15, type=float,
+
+    # --opacity参数，指定透明度，数值越小越透明
+    parse.add_argument("--opacity", default=0.05, type=float,
                        help="opacity of watermarks, default is 0.15")
+
+    # --quality参数，输出图像的质量
     parse.add_argument("--quality", default=80, type=int,
                        help="quality of output images, default is 90")
 
