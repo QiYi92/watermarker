@@ -1,3 +1,17 @@
+# 前置声明
+此项目为[2Dou/watermarker](https://github.com/2Dou/watermarker)大佬的项目派生
+本项目主要用于hexo+github图床批量添加水印
+经过本人测试发现原项目在对gif图片添加水印时会导致gif动图无法使用，特做此派生解决此问题
+顺便修复原项目几个bug，添加了几个关键参数的注释，方便直接在代码里修改参数
+
+![](https://cdn.jsdelivr.net/gh/QiYi92/ImageHost/img/202108080037002.png)
+
+# 执行
+将需要上水印的图片扔在img文件夹即可
+```
+python marker.py -f ./img -m 添加水印
+```
+如果需要修改输出文件夹，直接在源码中修改-o参数的default的值即可
 # marker.py
 
 为图片添加文字水印
